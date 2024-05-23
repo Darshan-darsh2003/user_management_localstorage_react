@@ -5,45 +5,75 @@ import { Container, Form, Row, Col, Button } from "react-bootstrap";
 import AppNavbar from "../components/Navbar";
 
 const CreateUser: React.FC = () => {
-  const [name, setName] = useState("");
-  const [age, setAge] = useState<number | string>("");
-  const [mobile, setMobile] = useState<number | string>("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
-  const [occupation, setOccupation] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    age: "",
+    mobile: "",
+    email: "",
+    address: "",
+    city: "",
+    state: "",
+    country: "",
+    occupation: "",
+  });
+
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleUserCrud = new HandleUserCrud();
 
+  const validate = (): boolean => {
+    const newErrors: { [key: string]: string } = {};
+    const age = Number(formData.age);
+    const mobile = formData.mobile;
+
+    if (formData.name.length < 2)
+      newErrors.name = "Name must be at least 2 characters long";
+    if (isNaN(age) || age < 1)
+      newErrors.age = "Age must be a number greater than 0";
+    if (!/^\d{10}$/.test(mobile))
+      newErrors.mobile = "Mobile number must be exactly 10 digits";
+    if (!/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = "Email is invalid";
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validate()) {
+      return;
+    }
+
     const user: User = {
       id: "",
-      name,
-      age: Number(age),
-      mobile: Number(mobile),
-      email,
-      address,
-      city,
-      state,
-      country,
-      occupation,
+      ...formData,
+      age: Number(formData.age),
+      mobile: formData.mobile,
     };
+
     await handleUserCrud.create(user);
     alert("User created successfully");
     // Reset form fields
-    setName("");
-    setAge("");
-    setMobile("");
-    setEmail("");
-    setOccupation("");
-    setAddress("");
-    setCity("");
-    setState("");
-    setCountry("");
+    setFormData({
+      name: "",
+      age: "",
+      mobile: "",
+      email: "",
+      address: "",
+      city: "",
+      state: "",
+      country: "",
+      occupation: "",
+    });
     window.location.href = "/";
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   return (
@@ -58,10 +88,13 @@ const CreateUser: React.FC = () => {
               <Form.Control
                 type="text"
                 placeholder="Enter name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
               />
+              {errors.name && (
+                <small className="text-danger">{errors.name}</small>
+              )}
             </Form.Group>
 
             <Form.Group as={Col} controlId="formAge">
@@ -69,10 +102,13 @@ const CreateUser: React.FC = () => {
               <Form.Control
                 type="number"
                 placeholder="Enter age"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                required
+                name="age"
+                value={formData.age}
+                onChange={handleChange}
               />
+              {errors.age && (
+                <small className="text-danger">{errors.age}</small>
+              )}
             </Form.Group>
           </Row>
 
@@ -80,12 +116,15 @@ const CreateUser: React.FC = () => {
             <Form.Group as={Col} controlId="formMobile">
               <Form.Label>Mobile</Form.Label>
               <Form.Control
-                type="text"
+                type="number"
                 placeholder="Enter mobile number"
-                value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
-                required
+                name="mobile"
+                value={formData.mobile}
+                onChange={handleChange}
               />
+              {errors.mobile && (
+                <small className="text-danger">{errors.mobile}</small>
+              )}
             </Form.Group>
 
             <Form.Group as={Col} controlId="formEmail">
@@ -93,10 +132,13 @@ const CreateUser: React.FC = () => {
               <Form.Control
                 type="email"
                 placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
               />
+              {errors.email && (
+                <small className="text-danger">{errors.email}</small>
+              )}
             </Form.Group>
           </Row>
 
@@ -106,58 +148,73 @@ const CreateUser: React.FC = () => {
               <Form.Control
                 type="text"
                 placeholder="Enter address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                required
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
               />
+              {errors.address && (
+                <small className="text-danger">{errors.address}</small>
+              )}
             </Form.Group>
+          </Row>
 
+          <Row className="mb-3">
             <Form.Group as={Col} controlId="formCity">
               <Form.Label>City</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter city"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                required
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
               />
+              {errors.city && (
+                <small className="text-danger">{errors.city}</small>
+              )}
             </Form.Group>
-          </Row>
 
-          <Row className="mb-3">
             <Form.Group as={Col} controlId="formState">
               <Form.Label>State</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter state"
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-                required
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
               />
+              {errors.state && (
+                <small className="text-danger">{errors.state}</small>
+              )}
             </Form.Group>
+          </Row>
 
+          <Row className="mb-3">
             <Form.Group as={Col} controlId="formCountry">
               <Form.Label>Country</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter country"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                required
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
               />
+              {errors.country && (
+                <small className="text-danger">{errors.country}</small>
+              )}
             </Form.Group>
-          </Row>
 
-          <Row className="mb-3">
             <Form.Group as={Col} controlId="formOccupation">
               <Form.Label>Occupation</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter occupation"
-                value={occupation}
-                onChange={(e) => setOccupation(e.target.value)}
-                required
+                name="occupation"
+                value={formData.occupation}
+                onChange={handleChange}
               />
+              {errors.occupation && (
+                <small className="text-danger">{errors.occupation}</small>
+              )}
             </Form.Group>
           </Row>
 

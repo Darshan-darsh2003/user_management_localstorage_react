@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Navbar,
-  Nav,
-  Container,
-  Form,
-  FormControl,
-  Button,
-} from "react-bootstrap";
+import { Navbar, Nav, Container, Form, FormControl } from "react-bootstrap";
 
 interface AppNavbarProps {
   searchTerm?: string;
@@ -29,13 +22,12 @@ const AppNavbar = ({ searchTerm, handleSearch, listPage }: AppNavbarProps) => {
             <Form className="d-flex">
               <FormControl
                 type="search"
-                placeholder="Search"
+                placeholder="Search User"
                 className="me-2"
                 aria-label="Search"
                 value={searchTerm ?? ""}
                 onChange={handleSearch ?? (() => {})}
               />
-              <Button variant="outline-success">Search</Button>
             </Form>
           )}
         </Navbar.Collapse>
